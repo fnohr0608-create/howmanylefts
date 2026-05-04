@@ -1,1 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Many Lefts — Life's honest numbers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+    *, * ::before, * ::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0
+    }
+
+    :root {
+        --sand: #F5F0E8;
+        --ink: #1A1714;
+        --muted: #7A746B;
+        --accent: #C4522A;
+        --accent-light: #FAECE7;
+        --border: rgba(26, 23, 20, 0.12);
+        --card-bg: #FFFFFF;
+    }
+
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--sand);
+        color: var(--ink);
+        min-height: 100vh;
+        line-height: 1.6
+    }
+
+    header {
+        padding: 3rem 2rem 2rem;
+        max-width: 720px;
+        margin: 0 auto
+    }
+
+    .logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        letter-spacing: .04em;
+        color: var(--muted);
+        margin-bottom: 3rem
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+        font-weight: 400;
+        line-height: 1.15;
+        margin-bottom: 1rem
+    }
+
+    h1 em {
+        font-style: italic;
+        color: var(--accent)
+    }
+
+    .tagline {
+        font-size: 1.05rem;
+        color: var(--muted);
+        max-width: 480px;
+        margin-bottom: 2.5rem;
+        font-weight: 300
+    }
+
+    .input-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        padding: 8px 8px 8px 24px;
+        max-width: 420px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, .06)
+    }
+
+    .input-row label {
+        font-size: .85rem;
+        color: var(--muted);
+        white-space: nowrap
+    }
+
+    .input-row input {
+        border: none;
+        outline: none;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 500;
+        width: 60px;
+        background: transparent;
+        color: var(--ink)
+    }
+
+    .btn {
+        background: var(--ink);
+        color: white;
+        border: none;
+        border-radius: 100px;
+        padding: 10px 22px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: .9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background .2s;
+        white-space: nowrap
+    }
+
+    .btn:hover {
+        background: #333
+    }
+
+    main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 0 2rem 4rem
+    }
+
+    .results {
+        display: none
+    }
+
+    .results.visible {
+        display: block
+    }
+
+    .section-label {
+        font-size: .75rem;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1.2rem;
+        margin-top: 2.8rem
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px
+    }
+
+    .card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 1.2rem 1.4rem;
+        transition: transform .15s, box-shadow .15s;
+        cursor: default
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, .08)
+    }
+
+    .card.accent {
+        background: var(--accent);
+        border-color: var(--accent)
+    }
+
+    .card.accent .card-label, .card.accent .card-num, .card.accent .card-sub {
+        color: white
+    }
+
+    .card.accent .card-label {
+        opacity: .75
+    }
+
+    .card.accent .card-sub {
+        opacity: .75
+    }
+
+    .card-label {
+        font-size: .78rem;
+        color: var(--muted);
+        margin-bottom: .5rem;
+        font-weight: 400
+    }
+
+    .card-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 500;
+        line-height: 1.1;
+        margin-bottom: .3rem;
+        color: var(--ink)
+    }
+
+    .card-sub {
+        font-size: .8rem;
+        color: var(--muted)
+    }
+
+    .honest-note {
+        margin-top: 2.5rem;
+        padding: 1.4rem 1.6rem;
+        background: white;
+        border-left: 3px solid var(--accent);
+        border-radius: 0 12px 12px 0;
+        font-size: .92rem;
+        color: var(--muted);
+        line-height: 1.7
+    }
+
+    .honest-note strong {
+        color: var(--ink);
+        font-weight: 500
+    }/* SHARE SECTION */
+    .share-section {
+        margin-top: 2.5rem;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 1.8rem 2rem
+    }
+
+    .share-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.1rem;
+        margin-bottom: .4rem
+    }
+
+    .share-sub {
+        font-size: .85rem;
+        color: var(--muted);
+        margin-bottom: 1.4rem
+    }
+
+    .share-card-preview {
+        background: var(--ink);
+        border-radius: 14px;
+        padding: 2rem;
+        margin-bottom: 1.4rem;
+        position: relative;
+        overflow: hidden
+    }
+
+    .share-card-preview::before {
+        content: '';
+        position: absolute;
+        top: -40px;
+        right: -40px;
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: rgba(196, 82, 42, .18)
+    }
+
+    .share-card-preview::after {
+        content: '';
+        position: absolute;
+        bottom: -30px;
+        left: -30px;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: rgba(196, 82, 42, .1)
+    }
+
+    .sc-eyebrow {
+        font-size: .7rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, .45);
+        margin-bottom: 1.2rem
+    }
+
+    .sc-stat {
+        margin-bottom: .9rem
+    }
+
+    .sc-num {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.4rem;
+        font-weight: 500;
+        color: white;
+        line-height: 1
+    }
+
+    .sc-label {
+        font-size: .8rem;
+        color: rgba(255, 255, 255, .55);
+        margin-top: .2rem
+    }
+
+    .sc-footer {
+        margin-top: 1.4rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid rgba(255, 255, 255, .12);
+        font-size: .72rem;
+        color: rgba(255, 255, 255, .35);
+        letter-spacing: .06em;
+        text-transform: uppercase
+    }
+
+    .share-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px
+    }
+
+    .share-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 18px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        background: white;
+        font-family: 'DM Sans', sans-serif;
+        font-size: .85rem;
+        font-weight: 500;
+        cursor: pointer;
+        color: var(--ink);
+        transition: all .15s;
+        text-decoration: none
+    }
+
+    .share-btn:hover {
+        background: var(--sand);
+        border-color: rgba(26, 23, 20, .25)
+    }
+
+    .share-btn svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0
+    }
+
+    .share-btn.twitter {
+        border-color: #1DA1F2;
+        color: #1DA1F2
+    }
+
+    .share-btn.twitter:hover {
+        background: #e8f5fe
+    }
+
+    .share-btn.copy-btn {
+        border-color: var(--accent);
+        color: var(--accent)
+    }
+
+    .share-btn.copy-btn:hover {
+        background: var(--accent-light)
+    }
+
+    .books-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border)
+    }
+
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 1rem
+    }
+
+    .book-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1rem 1.1rem;
+        text-decoration: none;
+        color: var(--ink);
+        transition: transform .15s, box-shadow .15s;
+        display: block
+    }
+
+    .book-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .08)
+    }
+
+    .book-emoji {
+        font-size: 1.6rem;
+        margin-bottom: .5rem
+    }
+
+    .book-title {
+        font-family: 'Playfair Display', serif;
+        font-size: .9rem;
+        margin-bottom: .25rem;
+        line-height: 1.3
+    }
+
+    .book-author {
+        font-size: .75rem;
+        color: var(--muted);
+        margin-bottom: .5rem
+    }
+
+    .book-tag {
+        display: inline-block;
+        font-size: .68rem;
+        background: var(--accent-light);
+        color: var(--accent);
+        padding: 2px 8px;
+        border-radius: 100px;
+        letter-spacing: .03em
+    }
+
+    .footer {
+        text-align: center;
+        padding: 2rem;
+        font-size: .8rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        margin-top: 3rem;
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto
+    }
+
+    .divider-quote {
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 1.05rem;
+        color: var(--muted);
+        text-align: center;
+        margin: 2.5rem 0;
+        padding: 0 1rem
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--ink);
+        color: white;
+        padding: 10px 22px;
+        border-radius: 100px;
+        font-size: .85rem;
+        transition: transform .3s;
+        pointer-events: none;
+        z-index: 99
+    }
+
+    .toast.show {
+        transform: translateX(-50%) translateY(0)
+    }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast">Link copied to clipboard</div>
+
+    <header>
+        <div class="logo">How Many Lefts</div>
+        <h1>
+            The numbers you've
+            <br>
+            never 
+            <em>dared</em>
+             to count.
+        </h1>
+        <p class="tagline">You know your age. But do you know how many summers you have left? How many times you'll see your best friend? Enter your age — and find out.</p>
+        <div class="input-row">
+            <label>I am</label>
+            <input type="number" id="age-input" min="1" max="99" placeholder="34" value="">
+            <label>years old</label>
+            <button class="btn" onclick="calculate()">Show me</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="results" id="results">
+            <div class="section-label">The big picture</div>
+            <div class="cards" id="cards-big"></div>
+            <div class="divider-quote">"The trouble is, you think you have time." — Buddha</div>
+            <div class="section-label">The small ones</div>
+            <div class="cards" id="cards-small"></div>
+
+            <div class="honest-note">
+                <strong>A note on these numbers.</strong>
+                 These are estimates based on a life expectancy of 80 years. Some of us get more, some less. None of us know. That's exactly the point — not to scare you, but to remind you that the people you love, the summers you enjoy, the ordinary Mondays you take for granted: they're finite. And finite things are precious.
+                    
+            </div>
+
+            <!-- SHARE SECTION -->
+            <div class="share-section">
+                <div class="share-title">Share your numbers</div>
+                <div class="share-sub">Sometimes a number hits differently when a friend sees it too.</div>
+
+                <div class="share-card-preview" id="share-preview">
+                    <div class="sc-eyebrow">howmanylefts.com</div>
+                    <div id="sc-stats"></div>
+                    <div class="sc-footer">What are yours? → howmanylefts.com</div>
+                </div>
+
+                <div class="share-buttons">
+                    <a class="share-btn twitter" id="twitter-btn" href="#" target="_blank" rel="noopener">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                        </svg>
+
+                                  Post on X
+                                
+                    </a>
+                    <button class="share-btn copy-btn" onclick="copyLink()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2"/>
+                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                        </svg>
+
+                                  Copy link
+                                
+                    </button>
+                    <button class="share-btn" onclick="shareNative()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8M16 6l-4-4-4 4M12 2v13"/>
+                        </svg>
+
+                                  Share
+                                
+                    </button>
+                </div>
+            </div>
+
+            <div class="books-section">
+                <div class="section-label">Books that put this into perspective</div>
+                <p style="font-size:.85rem;color:var(--muted);margin-bottom:.5rem">If these numbers made you feel something, these books will help you do something with it.</p>
+                <div class="books-grid">
+                    <a class="book-card" href="https://www.amazon.com/dp/0374533555?tag=howmanylefts-20" target="_blank" rel="noopener">
+                        <div class="book-emoji">⏳</div>
+                        <div class="book-title">Four Thousand Weeks</div>
+                        <div class="book-author">Oliver Burkeman</div>
+                        <span class="book-tag">on Amazon</span>
+                    </a>
+                    <a class="book-card" href="https://www.amazon.com/dp/1250301009?tag=howmanylefts-20" target="_blank" rel="noopener">
+                        <div class="book-emoji">🏃</div>
+                        <div class="book-title">Die with Zero</div>
+                        <div class="book-author">Bill Perkins</div>
+                        <span class="book-tag">on Amazon</span>
+                    </a>
+                    <a class="book-card" href="https://www.amazon.com/dp/0143114964?tag=howmanylefts-20" target="_blank" rel="noopener">
+                        <div class="book-emoji">🌿</div>
+                        <div class="book-title">The Power of Now</div>
+                        <div class="book-author">Eckhart Tolle</div>
+                        <span class="book-tag">on Amazon</span>
+                    </a>
+                    <a class="book-card" href="https://www.amazon.com/dp/0062316117?tag=howmanylefts-20" target="_blank" rel="noopener">
+                        <div class="book-emoji">🫂</div>
+                        <div class="book-title">When Breath Becomes Air</div>
+                        <div class="book-author">Paul Kalanithi</div>
+                        <span class="book-tag">on Amazon</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer">
+
+          howmanylefts.com — made with honesty, not dread.
+        <br>
+
+          Amazon links are affiliate links. They help keep this site alive — fitting, right?
+    </div>
+
+    <script>
+    let currentAge = 0;
+    let shareText = '';
+
+    function fmt(n) {
+        return Math.round(n).toLocaleString()
+    }
+
+    function calculate() {
+        const age = parseInt(document.getElementById('age-input').value);
+        if (!age || age < 1 || age > 99) {
+            document.getElementById('age-input').focus();
+            return
+        }
+        currentAge = age;
+
+        const remaining = Math.max(0, 80 - age);
+        const days = remaining * 365;
+        const weeks = remaining * 52;
+        const summers = remaining;
+        const mondays = remaining * 52;
+        const coffees = remaining * 365 * 2;
+        const sunsets = remaining * 365;
+        const friendVisits = remaining * 4;
+        const meals = remaining * 365 * 3;
+        const sleeps = remaining * 365;
+        const weekends = remaining * 52;
+        const winters = remaining;
+
+        const bigCards = [
+        {
+            label: 'summers left',
+            num: fmt(summers),
+            sub: 'long evenings, warm air',
+            accent: true
+        },
+        {
+            label: 'weeks remaining',
+            num: fmt(weeks),
+            sub: `that's ${fmt(days)} days`
+        },
+        {
+            label: 'weekends ahead',
+            num: fmt(weekends),
+            sub: 'Saturday mornings included'
+        },
+        {
+            label: 'winters to endure',
+            num: fmt(winters),
+            sub: 'or enjoy, your call'
+        },
+        ];
+        const smallCards = [
+        {
+            label: 'cups of coffee',
+            num: fmt(coffees),
+            sub: 'at 2 per day'
+        },
+        {
+            label: 'sunsets',
+            num: fmt(sunsets),
+            sub: 'if you look up'
+        },
+        {
+            label: 'times you\'ll see your best friend',
+            num: fmt(friendVisits),
+            sub: 'at 4 meetups per year'
+        },
+        {
+            label: 'meals left',
+            num: fmt(meals),
+            sub: 'make some of them count'
+        },
+        {
+            label: 'times you\'ll sleep',
+            num: fmt(sleeps),
+            sub: 'and wake up again'
+        },
+        {
+            label: 'mondays',
+            num: fmt(mondays),
+            sub: 'yes, all of them'
+        },
+        ];
+
+        function renderCards(id, cards) {
+            document.getElementById(id).innerHTML = cards.map(c => `
+      <div class="card ${c.accent ? 'accent' : ''}">
+        <div class="card-label">${c.label}</div>
+        <div class="card-num">${c.num}</div>
+        <div class="card-sub">${c.sub}</div>
+      </div>`
+            ).join('');
+        }
+        renderCards('cards-big', bigCards);
+        renderCards('cards-small', smallCards);
+
+        // Build share card preview
+        document.getElementById('sc-stats').innerHTML = `
+    <div class="sc-stat">
+      <div class="sc-num">${
+        fmt(summers)}</div>
+      <div class="sc-label">summers left</div>
+    </div>
+    <div class="sc-stat">
+      <div class="sc-num">${
+
+
+        fmt(friendVisits)}</div>
+      <div class="sc-label">times I'll see my best friend</div>
+    </div>
+    <div class="sc-stat">
+      <div class="sc-num">${
+
+
+        fmt(sunsets)}</div>
+      <div class="sc-label">sunsets, if I look up</div>
+    </div>`
+
+        ;
+
+        // Build share text for Twitter
+        shareText = `I'm ${age}. That means I have:\n\n🌞 ${fmt(summers)} summers left\n👫 ${fmt(friendVisits)} times I'll see my best friend\n🌅 ${fmt(sunsets)} sunsets, if I look up\n\nWhat are yours? → howmanylefts.com`;
+
+        const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+        document.getElementById('twitter-btn').href = twitterUrl;
+
+        document.getElementById('results').classList.add('visible');
+        document.getElementById('results').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
+
+    function copyLink() {
+        const url = `https://howmanylefts.com?age=${currentAge}`;
+        const textToCopy = shareText + `\n\n${url}`;
+        navigator.clipboard.writeText(textToCopy).then(() => showToast('Copied to clipboard')).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = textToCopy;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Copied to clipboard');
+        });
+    }
+
+    function shareNative() {
+        if (navigator.share) {
+            navigator.share({
+                title: 'How Many Lefts?',
+                text: shareText,
+                url: `https://howmanylefts.com?age=${currentAge}`
+            });
+        } else {
+            copyLink();
+        }
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    document.getElementById('age-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter')
+            calculate()
+    });
+    </script>
+</body>
+</html>
 
